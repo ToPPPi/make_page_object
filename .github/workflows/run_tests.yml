@@ -28,6 +28,19 @@ jobs:
           pip install -r requirements.txt
           pip install webdriver-manager  # Устанавливаем webdriver-manager
 
+      - name: Install Allure CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install default-jre
+          wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          tar -xzf allure-2.24.0.tgz
+          sudo mv allure-2.24.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - name: Generate Allure report
+        run: |
+          allure generate allure-results -o allure-report --clean
+
       - name: Run tests
         run: |
           python run_tests.py -n 4 --alluredir=allure-results  # Запускаем тесты через run_tests.py с параллельным выполнением
