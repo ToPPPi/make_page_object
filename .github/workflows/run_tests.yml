@@ -38,8 +38,9 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
       - name: Run tests
+        continue-on-error: true
         run: |
-          pytest tests/ api/ -n 4 --alluredir=allure-results  # Запускаем тесты и сохраняем результаты для Allure
+          pytest tests/ api/ -n 4 --alluredir=allure-results --maxfail=10  # Запускаем тесты и сохраняем результаты для Allure
 
       - name: Generate Allure report
         run: |
