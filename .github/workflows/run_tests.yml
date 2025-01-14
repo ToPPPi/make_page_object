@@ -39,7 +39,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python tests/ api/ -n 4 --alluredir=allure-results  # Запускаем тесты и сохраняем результаты для Allure
+          pytest tests/ api/ -n 4 --alluredir=allure-results  # Запускаем тесты и сохраняем результаты для Allure
 
       - name: Generate Allure report
         run: |
