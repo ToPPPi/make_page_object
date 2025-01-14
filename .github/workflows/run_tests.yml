@@ -45,8 +45,8 @@ jobs:
         run: |
           allure generate allure-results -o allure-report --clean
 
-      - name: Upload test report
+      - name: Upload Allure report
         uses: actions/upload-artifact@v3
         with:
-         name: allure-report
-         path: allure-results  # Сохраняем отчет как артефакт
+          name: allure-report
+          path: allure-results  # Сохраняем отчет как артефакт
