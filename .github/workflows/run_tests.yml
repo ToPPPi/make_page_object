@@ -65,3 +65,11 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+
+      # Шаг 10: Публикуем отчет на GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          keep_files: true  # Сохранять существующие файлы в ветке gh-pages
