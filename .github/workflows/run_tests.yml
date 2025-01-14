@@ -37,13 +37,13 @@ jobs:
           sudo mv allure-2.24.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
-      - name: Generate Allure report
-        run: |
-          allure generate allure-results -o allure-report --clean
-
       - name: Run tests
         run: |
           python run_tests.py -n 4 --alluredir=allure-results  # Запускаем тесты через run_tests.py с параллельным выполнением
+
+      - name: Generate Allure report
+        run: |
+          allure generate allure-results -o allure-report --clean
 
       - name: Upload test report
         uses: actions/upload-artifact@v3
