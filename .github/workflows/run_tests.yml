@@ -39,14 +39,14 @@ jobs:
 
       - name: Run tests
         run: |
-          python run_tests.py -n 4 --alluredir=allure-results  # Запускаем тесты через run_tests.py с параллельным выполнением
+          pytest tests/ api/ -n 4 --alluredir=allure-results  # Запускаем тесты и сохраняем результаты для Allure
 
       - name: Generate Allure report
         run: |
-          allure generate allure-results -o allure-report --clean
+          allure generate allure-results -o allure-report --clean  # Генерируем HTML-отчет
 
       - name: Upload Allure report
         uses: actions/upload-artifact@v3
         with:
           name: allure-report
-          path: allure-results  # Сохраняем отчет как артефакт
+          path: allure-report  # Загружаем сгенерированный HTML-отчет
