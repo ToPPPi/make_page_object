@@ -5,3 +5,4 @@ get_chrome_driver
 pytest-check
 pytest-xdist
 allure-pytest
+pymysql
