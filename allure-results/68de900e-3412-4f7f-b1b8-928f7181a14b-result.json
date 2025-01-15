@@ -1,0 +1,1 @@
+{"name": "Тест успешной авторизации", "status": "skipped", "start": 1736978074749, "stop": 1736978074749, "uuid": "7f6df3ef-6102-44e0-9756-bdbf6b457897", "testCaseId": "b46a5494b1938ff0bc1144562162876a", "fullName": "tests.test_login_page.TestLogin#test_validLogin"}

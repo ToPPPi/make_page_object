@@ -45,7 +45,7 @@ jobs:
       - name: Run tests
         continue-on-error: true  # Продолжать выполнение, даже если тесты упали
         run: |
-          pytest tests/ api/ -n 4 --alluredir=allure-results --maxfail=10
+          pytest tests/ -n 4 --alluredir=allure-results --maxfail=10
 
       # Шаг 6: Генерируем Allure-отчет
       - name: Generate Allure report
