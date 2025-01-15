@@ -1,6 +1,7 @@
 ﻿import pytest
 import os
 import shutil
+import pymysql
 from selenium import webdriver
 from get_chrome_driver import GetChromeDriver
 from selenium.webdriver.chrome.options import Options
@@ -39,3 +40,21 @@ def clean_allure_results():
             # Если папка уже удалена, игнорируем ошибку
             pass
     os.makedirs("allure-results", exist_ok=True)
+
+
+# Фикстура для подключения к базе данных
+@pytest.fixture
+def db_connection(request):
+    # Подключение к базе данных
+    connection = pymysql.connect(
+        host="127.0.0.1",
+        user="root",
+        password="admin",
+        database="testdb",
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
+    request.cls.connection = connection
+
+    yield connection
+    connection.close()

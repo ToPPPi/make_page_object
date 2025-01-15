@@ -3,6 +3,8 @@ from pytest_check import check
 import allure
 from ..conftest import setup
 from ..pages.home_page import LoginPage
+from ..utils.utils import read_json
+
 
 @pytest.mark.usefixtures("setup")
 @allure.feature("Тесты для авторизации")
@@ -31,14 +33,11 @@ class TestLogin:
 
     @allure.story("Проверка неуспешной авторизации")
     @allure.title("Тест неуспешной авторизации")
-    @pytest.mark.parametrize("username, password", [
-        ("admin", "admin"),
-        ("admin123", "admin123"),
-        ("admin1", "admin1")])
-    def test_invalidLogin(self, username, password):
+    @pytest.mark.parametrize("test_data", read_json("../test_data/testing_data.json"))
+    def test_invalidLogin(self, test_data):
         with allure.step("Проверка неуспешной авторизации"):
             with check:
-                assert self.lp.verifyLoginIncorrect(username, password) == "Invalid credentials"
+                assert self.lp.verifyLoginIncorrect(test_data["username"], test_data["password"]) == test_data["expected"]
 
 
 
