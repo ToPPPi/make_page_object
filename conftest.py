@@ -46,15 +46,18 @@ def clean_allure_results():
 @pytest.fixture
 def db_connection(request):
     # Подключение к базе данных
-    connection = pymysql.connect(
-        host="127.0.0.1",
-        user="root",
-        password="admin",
-        database="testdb",
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    try:
+        connection = pymysql.connect(
+            host="127.0.0.1",
+            user="root",
+            password="admin",
+            database="testdb",
+            cursorclass=pymysql.cursors.DictCursor
+        )
 
-    request.cls.connection = connection
+        request.cls.connection = connection
 
-    yield connection
-    connection.close()
+        yield connection
+        connection.close()
+    except pymysql.Error:
+        pytest.skip("База данных недоступна")
