@@ -16,9 +16,6 @@ def setup(request):
     chrome_options.add_argument("--no-sandbox")  # Отключаем sandbox для CI/CD
     chrome_options.add_argument("--disable-dev-shm-usage")  # Решает проблемы с памятью в CI/CD
 
-    #get_driver = GetChromeDriver()
-    #get_driver.install()
-    #driver = webdriver.Chrome(options=chrome_options)
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
     driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")

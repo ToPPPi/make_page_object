@@ -6,3 +6,4 @@ pytest-check
 pytest-xdist
 allure-pytest
 pymysql
+mysql-connector-python
