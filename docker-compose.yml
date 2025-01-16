@@ -1,0 +1,18 @@
+﻿version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0  # Используем официальный образ MySQL
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin  # Пароль для пользователя root
+      MYSQL_DATABASE: testdb      # Название базы данных
+      MYSQL_USER: testuser        # Пользователь базы данных
+      MYSQL_PASSWORD: testpass    # Пароль пользователя
+    ports:
+      - "3306:3306"  # Пробрасываем порт 3306 на хост
+    volumes:
+      - mysql_data:/var/lib/mysql  # Сохраняем данные базы данных
+
+volumes:
+  mysql_data:  # Именованный volume для хранения данных MySQL

@@ -45,7 +45,7 @@ def db_connection(request):
     # Подключение к базе данных
     try:
         connection = pymysql.connect(
-            host="127.0.0.1",
+            host="db",
             user="root",
             password="admin",
             database="testdb",
