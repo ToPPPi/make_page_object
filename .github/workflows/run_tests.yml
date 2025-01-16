@@ -2,6 +2,16 @@
 
 on:
   workflow_dispatch:  # Ручной запуск
+    inputs:
+      browser:
+        description: "Выберите браузер (chrome, firefox или all)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - all
   push:
     branches:
       - main  # Запускать тесты только при пуше в ветку main
@@ -65,32 +75,52 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version  # Проверяем установку
 
-      # Шаг 5: Запускаем тесты на Chrome и Firefox
-      - name: Run tests on Chrome and Firefox
+      # Шаг 5: Определяем браузер для тестов
+      - name: Determine browser
+        id: browser
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Выбран браузер: ${{ github.event.inputs.browser }}"
+            echo "browser=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
+          else
+            echo "Запуск по умолчанию: все браузеры"
+            echo "browser=all" >> $GITHUB_ENV
+          fi
+
+      # Шаг 6: Запускаем тесты
+      - name: Run tests
         continue-on-error: true  # Продолжать выполнение, даже если тесты упали
         run: |
-          pytest tests/ --browser=chrome --browser=firefox --alluredir=allure-results --maxfail=10
+          if [ "$browser" == "all" ]; then
+            pytest tests/ --alluredir=allure-results --maxfail=10
+          else
+            pytest tests/ --browser=$browser --alluredir=allure-results --maxfail=10
+          fi
 
-      # Шаг 6: Генерируем Allure-отчет
+      # Шаг 7: Генерируем Allure-отчет (если есть результаты)
       - name: Generate Allure report
         run: |
-          allure generate allure-results -o allure-report --clean
+          if [ -d "allure-results" ]; then
+            allure generate allure-results -o allure-report --clean
+          else
+            echo "No test results found. Skipping Allure report generation."
+          fi
 
-      # Шаг 7: Загружаем Allure-отчет как артефакт
+      # Шаг 8: Загружаем Allure-отчет как артефакт
       - name: Upload Allure report
         uses: actions/upload-artifact@v3
         with:
           name: allure-report
           path: allure-report
 
-      # Шаг 8: Загружаем результаты Allure-results как артефакт (для отладки)
+      # Шаг 9: Загружаем результаты Allure-results как артефакт (для отладки)
       - name: Upload Allure results
         uses: actions/upload-artifact@v3
         with:
           name: allure-results
           path: allure-results
 
-      # Шаг 9: Публикуем отчет на GitHub Pages
+      # Шаг 10: Публикуем отчет на GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

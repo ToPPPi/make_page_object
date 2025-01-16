@@ -14,11 +14,14 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 @pytest.fixture(params=["chrome", "firefox"])  # Параметризация для выбора браузера
 def setup(request):
+    # Получаем значение аргумента --browser, если он передан
+    browser_name = request.config.getoption("--browser", default=request.param)
+
     if os.getenv("CI") == "true":  # Проверяем, запущены ли тесты в CI/CD
         # Используем Selenium Grid
-        if request.param == "chrome":
+        if browser_name == "chrome":
             options = ChromeOptions()
-        elif request.param == "firefox":
+        elif browser_name == "firefox":
             options = FirefoxOptions()
 
         # Настройки для headless-режима
@@ -46,6 +49,12 @@ def setup(request):
 
     yield
     driver.quit()
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--browser", action="store", default="chrome", help="Браузер для тестов: chrome или firefox"
+    )
+
 
 
 @pytest.fixture(scope="session", autouse=True)
