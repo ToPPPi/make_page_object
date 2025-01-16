@@ -18,26 +18,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Шаг 2: Устанавливаем Docker
-      - name: Set up Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-          sudo docker --version  # Проверяем установку Docker
+      # Шаг 2: Устанавливаем Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"  # Указываем версию Python
 
-      # Шаг 3: Собираем Docker-образ
-      - name: Build Docker image
+      # Шаг 3: Устанавливаем зависимости
+      - name: Install dependencies
         run: |
-          docker build -t automation-qa .
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      # Шаг 4: Запускаем тесты в Docker-контейнере
-      - name: Run tests in Docker
-        continue-on-error: true  # Продолжать выполнение, даже если тесты упали
-        run: |
-          docker run -v $(pwd)/allure-results:/app/allure-results automation-qa
-
-      # Шаг 5: Устанавливаем Allure CLI
+      # Шаг 4: Устанавливаем Allure CLI
       - name: Install Allure CLI
         run: |
           sudo apt-get update
@@ -48,29 +41,45 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version  # Проверяем установку
 
-      # Шаг 6: Генерируем Allure-отчет
+      # Шаг 5: Запускаем Docker Compose
+      - name: Run Docker Compose
+        run: |
+          docker-compose up -d
+
+      # Шаг 6: Запускаем тесты и сохраняем результаты для Allure
+      - name: Run tests
+        continue-on-error: true  # Продолжать выполнение, даже если тесты упали
+        run: |
+          pytest tests/ -n 4 --alluredir=allure-results --maxfail=10
+
+      # Шаг 7: Генерируем Allure-отчет
       - name: Generate Allure report
         run: |
           allure generate allure-results -o allure-report --clean
 
-      # Шаг 7: Загружаем Allure-отчет как артефакт
+      # Шаг 8: Загружаем Allure-отчет как артефакт
       - name: Upload Allure report
         uses: actions/upload-artifact@v3
         with:
           name: allure-report
           path: allure-report
 
-      # Шаг 8: Загружаем результаты Allure-results как артефакт (для отладки)
+      # Шаг 9: Загружаем результаты Allure-results как артефакт (для отладки)
       - name: Upload Allure results
         uses: actions/upload-artifact@v3
         with:
           name: allure-results
           path: allure-results
 
-      # Шаг 9: Публикуем отчет на GitHub Pages
+      # Шаг 10: Публикуем отчет на GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
           keep_files: true  # Сохранять существующие файлы в ветке gh-pages
+
+      # Шаг 11: Останавливаем Docker Compose
+      - name: Stop Docker Compose
+        run: |
+          docker-compose down
