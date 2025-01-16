@@ -18,22 +18,24 @@ jobs:
         image: selenium/hub  # Официальный образ Selenium Hub
         ports:
           - 4444:4444  # Пробрасываем порт 4444
+
       chrome:
         image: selenium/node-chrome  # Узел для Chrome
-        depends_on:
-          - selenium-hub
-        environment:
+        env:
           SE_EVENT_BUS_HOST: selenium-hub
           SE_EVENT_BUS_PUBLISH_PORT: 4442
           SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+        ports:
+          - 5900:5900  # Пробрасываем порт для VNC (опционально)
+
       firefox:
         image: selenium/node-firefox  # Узел для Firefox
-        depends_on:
-          - selenium-hub
-        environment:
+        env:
           SE_EVENT_BUS_HOST: selenium-hub
           SE_EVENT_BUS_PUBLISH_PORT: 4442
           SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+        ports:
+          - 5901:5900  # Пробрасываем порт для VNC (опционально)
 
     steps:
       # Шаг 1: Клонируем репозиторий
