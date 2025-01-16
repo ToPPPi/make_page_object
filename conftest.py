@@ -7,17 +7,25 @@ from get_chrome_driver import GetChromeDriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
 
 
-@pytest.fixture()
+@pytest.fixture(params=["chrome", "firefox"])  # Параметризация для выбора браузера
 def setup(request):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Включаем headless mode
-    chrome_options.add_argument("--no-sandbox")  # Отключаем sandbox для CI/CD
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Решает проблемы с памятью в CI/CD
+    if request.param == "chrome":
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Включаем headless mode
+        chrome_options.add_argument("--no-sandbox")  # Отключаем sandbox для CI/CD
+        chrome_options.add_argument("--disable-dev-shm-usage")  # Решает проблемы с памятью в CI/CD
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
 
+    elif request.param == "firefox":
+        firefox_options = FirefoxOptions()
+        firefox_options.add_argument("--headless")  # Включаем headless mode
+        driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=firefox_options)
 
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
     driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")
     driver.implicitly_wait(5)
 
