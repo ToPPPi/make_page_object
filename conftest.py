@@ -45,8 +45,8 @@ def db_connection(request):
     # Подключение к базе данных
     try:
         connection = pymysql.connect(
-            host="db", #Работает если запускать через GitHub
-            #host="127.0.0.1", #Работает локально
+            #host="db", #Работает если запускать через GitHub
+            host="127.0.0.1", #Работает локально
             user="root",
             password="admin",
             database="testdb",

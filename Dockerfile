@@ -1,4 +1,8 @@
-﻿# Используем официальный образ Python
+﻿#Как запустить тесты локально:
+#docker build -t automation-qa .
+#docker run automation-qa
+
+# Используем официальный образ Python
 FROM python:3.11
 
 # Устанавливаем необходимые пакеты для Chrome и ChromeDriver
