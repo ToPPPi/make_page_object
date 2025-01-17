@@ -20,10 +20,9 @@ on:
       - main  # Запускать тесты при создании пул-реквеста в ветку main
 
 jobs:
-  test:
+  # Независимый job для проверки окружения
+  setup:
     runs-on: ubuntu-latest
-    needs: selenium-grid-setup  # Зависит от workflow "Selenium Grid Setup"
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -48,6 +47,12 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
           allure --version
 
+  # Job для запуска тестов
+  test:
+    runs-on: ubuntu-latest
+    needs: setup  # Зависит от job "setup"
+
+    steps:
       - name: Determine browser
         id: browser
         run: |
