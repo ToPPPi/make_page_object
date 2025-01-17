@@ -3,7 +3,6 @@ import os
 import shutil
 import pymysql
 from selenium import webdriver
-from get_chrome_driver import GetChromeDriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -54,8 +53,6 @@ def pytest_addoption(parser):
     parser.addoption(
         "--browser", action="store", default="chrome", help="Браузер для тестов: chrome или firefox"
     )
-
-
 
 @pytest.fixture(scope="session", autouse=True)
 def clean_allure_results():
